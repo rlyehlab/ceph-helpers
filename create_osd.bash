@@ -24,7 +24,7 @@
 #
 ##############################################################################
 
-VERSION="0.2"
+VERSION="0.3"
 
 # /dev/mapper/cryptodisk
 # /dev/sdX
@@ -39,7 +39,6 @@ bailout() {
 
 usage() {
 	echo "$0 <block device> [<volume group name> [<logical volume name>]]"
-	exit 1
 }
 
 info() {
@@ -56,7 +55,11 @@ warning() {
 
 info "CreateOSD v${VERSION} by HacKan | GNU GPL v3+"
 
-[[ -z "$BLOCK_DEVICE" ]] && error "Block device is a mandatory parameter" && usage
+[[ "$1" == "-h" || "$1" == "--help" ]] && usage && exit 0
+
+[[ -z "$BLOCK_DEVICE" ]] && error "Block device is a mandatory parameter" && usage && exit 1
+
+[[ ! -b "$BLOCK_DEVICE" ]] && bailout "The specified device is not a block device!"
 
 [[ "$(whoami)" != "root" ]] && bailout "This script must be run as root"
 
