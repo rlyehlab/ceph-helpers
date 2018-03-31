@@ -24,7 +24,7 @@
 #
 ##############################################################################
 
-VERSION="0.3"
+VERSION="0.4"
 
 # /dev/mapper/cryptodisk
 # /dev/sdX
@@ -64,6 +64,12 @@ info "CreateOSD v${VERSION} by HacKan | GNU GPL v3+"
 [[ "$(whoami)" != "root" ]] && bailout "This script must be run as root"
 
 info "Deploying at $(hostname)"
+info "Checking for active VG/LV"
+vg="$(pvs | grep /dev/mapper/cdisk2 | cut -f4 -d' ')"
+if [[ -n "$vg" ]]; then
+    info "Removing VG/LV"
+    sudo vgremove -y "$vg" || bailout
+fi
 info "Zapping $BLOCK_DEVICE"
 echo
 ceph-volume lvm zap "$BLOCK_DEVICE" || bailout
