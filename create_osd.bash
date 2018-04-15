@@ -65,10 +65,10 @@ info "CreateOSD v${VERSION} by HacKan | GNU GPL v3+"
 
 info "Deploying at $(hostname)"
 info "Checking for active VG/LV"
-vg="$(pvs | grep /dev/mapper/cdisk2 | cut -f4 -d' ')"
+vg="$(pvs | grep "$BLOCK_DEVICE" | cut -f4 -d' ')"
 if [[ -n "$vg" ]]; then
     info "Removing VG/LV"
-    sudo vgremove -y "$vg" || bailout
+    sudo vgremove -yv "$vg" || bailout
 fi
 info "Zapping $BLOCK_DEVICE"
 echo
